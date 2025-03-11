@@ -1,12 +1,13 @@
 ## 📌 Table of Contents
-1. [Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
-2. [Contains Duplicate](#217-contains-duplicate)
-3. [Product of Array Except Self](#238-product-of-array-except-self)
-4. [Maximum Subarray](#53-maximum-subarray)
-5. [Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
-6. [Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
-7. [3Sum](#15-3sum)
-8. [Container With Most Water](#11-container-with-most-water)
+1. [Two Sum Problem](#1-two-sum-problem)
+2. [Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
+3. [Contains Duplicate](#217-contains-duplicate)
+4. [Product of Array Except Self](#238-product-of-array-except-self)
+5. [Maximum Subarray](#53-maximum-subarray)
+6. [Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
+7. [Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
+8. [3Sum](#15-3sum)
+9. [Container With Most Water](#11-container-with-most-water)
 
 
 
