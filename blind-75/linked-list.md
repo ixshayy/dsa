@@ -4,7 +4,7 @@
 3. [Merge Two Sorted Lists](#3-merge-two-sorted-lists)
 4. [Merge k Sorted Lists](#4-merge-k-sorted-lists)
 5. [Remove Nth Node From End of List](#5-remove-nth-node-from-end-of-list)
-
+6. [Reorder List](#6-reorder-list)
 
 
 # 1. Reverse Linked List
@@ -532,7 +532,7 @@ public:
 [🔼 Back to Top](#-table-of-contents)
 
 
-# 143. Reorder List
+# 6. Reorder List
 
 ## Problem Statement
 You are given the head of a singly linked list. The list can be represented as:
