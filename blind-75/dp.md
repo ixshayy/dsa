@@ -2,10 +2,13 @@
 1. [Climbing Stairs](#1-climbing-stairs)
 2. [Coin Change](#2-coin-change)
 3. [Longest Increasing Subsequence](#3-longest-increasing-subsequence)
-4. [Longest Common Subsequence](#longest-common-subsequence)
-
-
-
+4. [Longest Common Subsequence](#4-longest-common-subsequence)
+5. [Word Break](#5-word-break)
+6. [Combination Sum](#6-combination-sum)
+7. [House Robber](#7-house-robber)
+8. [Decode Ways](#8-decode-ways)
+9. [Unique Paths](#9-unique-paths)
+10. [Jump Game](#10-jump-game)
 
 
 
@@ -216,6 +219,8 @@ public:
 - **Recursive + Memoization:** `O(n * amount)` time complexity and `O(n * amount)` space complexity.
 - **Bottom-Up DP:** `O(n * amount)` time complexity and `O(n * amount)` space complexity.
 
+[🔼 Back to Top](#-table-of-contents)
+
 
 # 3. Longest Increasing Subsequence
 
@@ -334,6 +339,8 @@ public:
 };
 ```
 
+[🔼 Back to Top](#-table-of-contents)
+
 # 4. Longest Common Subsequence
 
 ## Problem Statement
@@ -416,3 +423,433 @@ public:
 ```
 
 
+
+[🔼 Back to Top](#-table-of-contents)
+
+# 5. Word Break
+
+unavailable...
+
+[🔼 Back to Top](#-table-of-contents)
+
+
+# 6. Combination Sum
+
+## Problem Statement
+Given an array of **distinct** integers `candidates` and a target integer `target`, return a list of **all unique combinations** of `candidates` where the chosen numbers sum to `target`. You may return the combinations in any order.
+
+The same number may be chosen from `candidates` an **unlimited number of times**. Two combinations are unique if the frequency of at least one of the chosen numbers is different.
+
+The test cases are generated such that the number of unique combinations that sum up to `target` is less than 150 combinations for the given input.
+
+## Examples
+
+### Example 1:
+**Input:**
+```cpp
+candidates = [2,3,6,7], target = 7
+```
+**Output:**
+```cpp
+[[2,2,3],[7]]
+```
+**Explanation:**
+- 2 and 3 are candidates, and `2 + 2 + 3 = 7`. Note that `2` can be used multiple times.
+- `7` is a candidate, and `7 = 7`.
+- These are the only two combinations.
+
+### Example 2:
+**Input:**
+```cpp
+candidates = [2,3,5], target = 8
+```
+**Output:**
+```cpp
+[[2,2,2,2],[2,3,3],[3,5]]
+```
+
+### Example 3:
+**Input:**
+```cpp
+candidates = [2], target = 1
+```
+**Output:**
+```cpp
+[]
+```
+
+## Constraints:
+- `1 <= candidates.length <= 30`
+- `2 <= candidates[i] <= 40`
+- All elements of `candidates` are **distinct**.
+- `1 <= target <= 40`
+
+## Practice
+[LeetCode](https://leetcode.com/problems/combination-sum/)
+
+
+## Solution
+```cpp
+class Solution {
+private:
+    void getCombinationSum(int index, vector<int> &candidates, int remSum, vector<int> &current, vector<vector<int>> &ans) {
+        if (index >= candidates.size()) {
+            if (remSum == 0) ans.push_back(current);
+            return;
+        }
+
+        // Include the current candidate if it does not exceed the remaining sum
+        if (candidates[index] <= remSum) {
+            current.push_back(candidates[index]);
+            getCombinationSum(index, candidates, remSum - candidates[index], current, ans);
+            current.pop_back(); // Backtrack
+        }
+
+        // Exclude the current candidate and move to the next one
+        getCombinationSum(index + 1, candidates, remSum, current, ans);
+    }
+
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<int> current;
+        vector<vector<int>> ans;
+        getCombinationSum(0, candidates, target, current, ans);
+        return ans;
+    }
+};
+```
+[🔼 Back to Top](#-table-of-contents)
+
+# 7. House Robber
+
+## Problem Statement
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, but the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected. If two adjacent houses are broken into on the same night, the police will be alerted.
+
+Given an integer array `nums` representing the amount of money in each house, return the maximum amount of money you can rob tonight without alerting the police.
+
+## Examples
+
+### Example 1:
+**Input:**
+```cpp
+nums = [1,2,3,1]
+```
+**Output:**
+```cpp
+4
+```
+**Explanation:**
+Rob house 1 (money = 1) and then rob house 3 (money = 3). Total amount robbed = `1 + 3 = 4`.
+
+### Example 2:
+**Input:**
+```cpp
+nums = [2,7,9,3,1]
+```
+**Output:**
+```cpp
+12
+```
+**Explanation:**
+Rob house 1 (money = 2), rob house 3 (money = 9), and rob house 5 (money = 1). Total amount robbed = `2 + 9 + 1 = 12`.
+
+## Constraints
+- `1 <= nums.length <= 100`
+- `0 <= nums[i] <= 400`
+
+## Practice
+[Leetcode](https://leetcode.com/problems/house-robber/description/)
+
+
+## Solution Approaches
+### Approach 1: Recursion with Memoization
+```cpp
+class Solution {
+private:
+    int search(vector<int>& nums, int index, vector<int> &memo){
+        if(index == 0) return nums[index];
+        if(index < 0) return 0;
+
+        if(memo[index] != -1) return memo[index];
+
+        int pick = nums[index] + search(nums, index-2, memo);
+        int notPick = search(nums, index-1, memo);
+
+        return memo[index] = max(pick, notPick);
+    }
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> memo(n+1, -1);
+        return search(nums, n-1, memo);
+    }
+};
+```
+**Time Complexity:** `O(N)` (Each subproblem is solved only once and stored in `memo`).
+**Space Complexity:** `O(N)` (For the `memo` array and recursion stack).
+
+### Approach 2: Bottom-Up Dynamic Programming (Tabulation)
+```cpp
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> memo(n, -1);
+
+        memo[0] = nums[0];
+        int sum = memo[0];
+
+        for(int i = 1 ; i < n ; i++){
+            int pick = nums[i];
+            if(i > 1) pick += memo[i-2];
+
+            int notPick = memo[i-1];
+            sum = max(pick, notPick);
+            memo[i] = sum;
+        }
+
+        return sum;
+    }
+};
+```
+**Time Complexity:** `O(N)` (Iterates through `nums` once).
+**Space Complexity:** `O(N)` (For the `memo` array).
+
+### Approach 3: Optimized Space Dynamic Programming
+```cpp
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+
+        int prev2 = 0;
+        int prev = nums[0];
+
+        for(int i = 1 ; i < n ; i++){
+            int pick = nums[i];
+            if(i > 1) pick += prev2;
+
+            int notPick = prev;
+            int curr = max(pick, notPick);
+            prev2 = prev;
+            prev = curr;
+        }
+
+        return prev;
+    }
+};
+```
+**Time Complexity:** `O(N)` (Iterates through `nums` once).
+**Space Complexity:** `O(1)` (Uses only two variables `prev` and `prev2`).
+
+[🔼 Back to Top](#-table-of-contents)
+
+
+# 8. Decode Ways
+
+unavailable...
+
+[🔼 Back to Top](#-table-of-contents)
+
+
+
+# 9. Unique Paths
+
+## Problem Statement
+
+There is a robot on an `m x n` grid. The robot is initially located at the top-left corner `(grid[0][0])`. The robot tries to move to the bottom-right corner `(grid[m - 1][n - 1])`. The robot can only move either **down** or **right** at any point in time.
+
+Given two integers `m` and `n`, return the **number of unique paths** that the robot can take to reach the bottom-right corner.
+
+The test cases are generated so that the answer will be **less than or equal to 2 * 10^9**.
+
+### Example 1:
+
+```plaintext
+Input: m = 3, n = 7
+Output: 28
+```
+
+### Example 2:
+
+```plaintext
+Input: m = 3, n = 2
+Output: 3
+Explanation: From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:
+1. Right -> Down -> Down
+2. Down -> Down -> Right
+3. Down -> Right -> Down
+```
+
+### Constraints:
+
+- `1 <= m, n <= 100`
+
+
+## Practice
+[Leetcode](https://leetcode.com/problems/unique-paths/description/)
+
+
+## Solution
+
+### Approach 1: Recursion with Memoization (Top-Down DP)
+
+#### Code:
+```cpp
+class Solution {
+private:
+    int search(int x, int y, vector<vector<int>>& memo){
+        if(x == 0 && y == 0) return 1;
+        if(x < 0 || y < 0) return 0;
+        if(memo[x][y] != -1) return memo[x][y];
+        return memo[x][y] = search(x-1, y, memo) + search(x, y-1, memo);
+    }
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> memo(m, vector<int>(n, -1));
+        return search(m-1, n-1, memo);
+    }
+};
+```
+
+#### Complexity Analysis:
+- **Time Complexity:** `O(m * n)`, as each subproblem is computed only once and stored in the `memo` table.
+- **Space Complexity:** `O(m * n)`, due to the recursion stack and memoization table.
+
+---
+
+### Approach 2: Dynamic Programming (Bottom-Up DP)
+
+#### Code:
+```cpp
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> memo(m, vector<int>(n, -1));
+        vector<int> prev(n, 0);
+        
+        for(int i = 0; i < m; i++){
+            vector<int> curr(n);
+            for(int j = 0; j < n; j++){
+                if(i == 0 && j == 0) curr[j] = 1;
+                else{
+                    int l = 0, r = 0;
+                    if(i > 0) l = prev[j];
+                    if(j > 0) r = curr[j-1];
+                    curr[j] = l + r;
+                }
+            }
+            prev = curr;
+        }
+        return prev[n-1];
+    }
+};
+```
+
+#### Complexity Analysis:
+- **Time Complexity:** `O(m * n)`, as we iterate through the entire grid.
+- **Space Complexity:** `O(n)`, as we optimize the space usage with a single row (`prev`).
+
+---
+
+### Approach 3: Space Optimized Dynamic Programming
+
+#### Code:
+```cpp
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<int> prev(n, 0);
+        
+        for(int i = 0; i < m; i++){
+            vector<int> curr(n);
+            for(int j = 0; j < n; j++){
+                if(i == 0 && j == 0) curr[j] = 1;
+                else{
+                    int l = 0, r = 0;
+                    if(i > 0) l = prev[j];
+                    if(j > 0) r = curr[j-1];
+                    curr[j] = l + r;
+                }
+            }
+            prev = curr;
+        }
+        return prev[n-1];
+    }
+};
+```
+
+#### Complexity Analysis:
+- **Time Complexity:** `O(m * n)`, since we iterate through all grid cells.
+- **Space Complexity:** `O(n)`, as we only store two rows at a time instead of the entire grid.
+
+
+[🔼 Back to Top](#-table-of-contents)
+
+
+# 10. Jump Game
+
+## Problem Statement
+
+You are given an integer array `nums`. You are initially positioned at the array's first index, and each element in the array represents your **maximum jump length** at that position.
+
+Return `true` if you can reach the last index, or `false` otherwise.
+
+### Example 1:
+
+```plaintext
+Input: nums = [2,3,1,1,4]
+Output: true
+Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+```
+
+### Example 2:
+
+```plaintext
+Input: nums = [3,2,1,0,4]
+Output: false
+Explanation: You will always arrive at index 3 no matter what. Its maximum jump length is 0, which makes it impossible to reach the last index.
+```
+
+### Constraints:
+
+- `1 <= nums.length <= 10^4`
+- `0 <= nums[i] <= 10^5`
+
+## Practice
+[Leetcode](https://leetcode.com/problems/jump-game/description/)
+
+## Solution
+
+### Greedy Algorithm
+
+#### Explanation:
+- Start from the last index and move backward.
+- Maintain a `goal` position that initially points to the last index.
+- If at index `i`, you can jump to `goal` (`i + nums[i] >= goal`), update `goal = i`.
+- If `goal` reaches index `0`, return `true`; otherwise, return `false`.
+
+#### Code:
+```cpp
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int goal = nums.size() - 1;
+        
+        for (int i = nums.size() - 1; i >= 0; i--) {
+            if (i + nums[i] >= goal) {
+                goal = i;
+            }
+        }
+        
+        return goal == 0;
+    }
+};
+```
+
+### Complexity Analysis:
+- **Time Complexity:** `O(n)`, as we traverse the array once.
+- **Space Complexity:** `O(1)`, since we use only a single integer variable `goal`.
+
+
+[🔼 Back to Top](#-table-of-contents)
