@@ -4,6 +4,8 @@
 3. [Longest Repeating Character Replacement](#3-longest-repeating-character-replacement)
 4. [Binary Subarrays With Sum](#4-binary-subarrays-with-sum)
 5. [Count Number of Nice Subarrays](#5-count-umber-of-nice-subarrays)
+6. [Maximum Points You Can Obtain from Cards](#6-maximum-points-you-can-obtain-from-cards)
+7. [Number of Substrings Containing All Three Characters](#7-number-of-substrings-containing-all-three-characters)
 
 
 
@@ -512,6 +514,245 @@ public:
 ## Time Complexity Analysis
 - **`subArrCount(nums, k)`** runs in **O(n)** time because it processes each element once.
 - Since we call this function twice, the overall time complexity is **O(n)**.
+
+
+[🔼 Back to Top](#-table-of-contents)
+
+# 6. Maximum Points You Can Obtain from Cards
+
+## Problem Statement
+There are several cards arranged in a row, and each card has an associated number of points. The points are given in the integer array `cardPoints`.
+
+In one step, you can take one card from the beginning or from the end of the row. You have to take exactly `k` cards.
+
+Your score is the sum of the points of the cards you have taken.
+
+Given the integer array `cardPoints` and the integer `k`, return the maximum score you can obtain.
+
+---
+
+## Examples
+
+### Example 1:
+**Input:**
+```plaintext
+cardPoints = [1,2,3,4,5,6,1], k = 3
+```
+**Output:**
+```plaintext
+12
+```
+**Explanation:** The optimal strategy is to take the three cards on the right, giving a final score of `1 + 6 + 5 = 12`.
+
+### Example 2:
+**Input:**
+```plaintext
+cardPoints = [2,2,2], k = 2
+```
+**Output:**
+```plaintext
+4
+```
+**Explanation:** Regardless of which two cards you take, your score will always be 4.
+
+### Example 3:
+**Input:**
+```plaintext
+cardPoints = [9,7,7,9,7,7,9], k = 7
+```
+**Output:**
+```plaintext
+55
+```
+**Explanation:** You have to take all the cards. Your score is the sum of all card points.
+
+---
+
+## Constraints:
+- `1 <= cardPoints.length <= 10^5`
+- `1 <= cardPoints[i] <= 10^4`
+- `1 <= k <= cardPoints.length`
+
+---
+
+## Solution Approach
+The goal is to maximize the sum by selecting exactly `k` cards from either end of the array.
+
+### Optimized Approach:
+Instead of selecting `k` cards directly, we can find the **minimum sum subarray of length `n - k`**, and subtract this from the total sum to get the maximum score.
+
+### Algorithm:
+Intiution [1, 2, 3, 4, 5, 6, 1]    k = 3
+lSum = 1+2+3 = 6, rSum = 0    sum = lSum+rSum = 6+0 = 6   maxSum = 6
+lSum = 6-3 = 3, rSum = 0+1 = 1    sum = 3+1 = 4   maxSum = 6
+lSum = 3-2 = 1, rSum = 1+6 = 7    sum = 1+7 = 8  maxSum = 8
+lSum = 1-1 = 0, rSum = 7+5 = 12   sum = 0+12 = 12  maxSum = 12
+
+## Practice
+[Leetcode](https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/)
+
+---
+
+## Solution
+```cpp
+class Solution {
+public:
+    int maxScore(vector<int>& cardPoints, int k) {
+        int score = 0;
+        int mxScore = 0;
+        int n = cardPoints.size();
+        
+        // Sum of first k elements
+        for(int i = 0; i < k; i++) {
+            score += cardPoints[i];
+        }
+
+        mxScore = score;
+
+        // Try replacing elements from the right end
+        for(int i = 0; i < k; i++) {
+            score -= cardPoints[k - i - 1];  // Remove last included left-side element
+            score += cardPoints[n - i - 1];  // Add one from the right
+            mxScore = max(mxScore, score);
+        }
+
+        return mxScore;
+    }
+};
+```
+
+---
+
+## Complexity Analysis
+- **Time Complexity:** `O(k)`, as we iterate `k` times over the array.
+- **Space Complexity:** `O(1)`, as no extra space is used.
+
+---
+
+[🔼 Back to Top](#-table-of-contents)
+
+
+
+# 7. Number of Substrings Containing All Three Characters
+
+## Problem Statement
+
+Given a string `s` consisting only of characters `'a'`, `'b'`, and `'c'`, return the number of substrings containing at least one occurrence of all these characters.
+
+### Example 1:
+**Input:**  
+`s = "abcabc"`  
+**Output:**  
+`10`  
+**Explanation:**  
+The substrings that contain `'a'`, `'b'`, and `'c'` are:  
+`"abc"`, `"abca"`, `"abcab"`, `"abcabc"`, `"bca"`, `"bcab"`, `"bcabc"`, `"cab"`, `"cabc"`, and `"abc"` (again).
+
+### Example 2:
+**Input:**  
+`s = "aaacb"`  
+**Output:**  
+`3`  
+**Explanation:**  
+Valid substrings: `"aaacb"`, `"aacb"`, and `"acb"`.
+
+### Example 3:
+**Input:**  
+`s = "abc"`  
+**Output:**  
+`1`  
+**Explanation:**  
+Only `"abc"` is a valid substring.
+
+## Constraints:
+- `3 <= s.length <= 5 × 10^4`
+- `s` only consists of `'a'`, `'b'`, or `'c'`.
+
+
+## Practice
+[Leetcode](https://leetcode.com/problems/number-of-substrings-containing-all-three-characters/description/)  
+
+
+## Intuition
+
+We need to count substrings that contain at least one occurrence of `'a'`, `'b'`, and `'c'`.  
+There are two approaches:
+
+1. **Brute Force (TLE)**:  
+   - Iterate over all possible substrings.
+   - Count occurrences of `'a'`, `'b'`, and `'c'` for each substring.
+   - If all three are present, increase the count.
+   - **Time Complexity:** O(N²) → Too slow for large inputs.
+
+2. **Optimal Approach (Sliding Window / Two Pointers):**
+    
+    - Instead of checking all substrings individually, we maintain a window that contains at least one 'a', 'b', and 'c'.
+
+    - Maintain an array lastSeen[3] to track the most recent occurrence of 'a', 'b', and 'c'.
+    - As we iterate through s, update lastSeen for the current character.
+
+    - The earliest of these three indices (min(lastSeen[0], lastSeen[1], lastSeen[2])) tells us the smallest index from which we can start a valid substring ending at the current position.
+
+    - This means all substrings starting from indices 0 to min(lastSeen) and ending at s[i] are valid.
+
+    - So, add 1 + min(lastSeen[0], lastSeen[1], lastSeen[2]) to our count.
+
+   - **Time Complexity:** O(N) → Efficient.
+
+## Solution
+
+### Brute Force (TLE)
+```cpp
+class Solution {
+public:
+    int numberOfSubstrings(string s) {
+        int count = 0;
+        int freq[3] = {0};
+        int n = s.size();
+
+        for(int i = 0 ; i < n ; i++) {
+            memset(freq, 0, 3 * sizeof(freq[0]));
+            for(int j = i ; j < n ; j++) {
+                freq[s[j] - 'a']++;
+                if (freq[0] >= 1 && freq[1] >= 1 && freq[2] >= 1) {
+                    count += 1;
+                } 
+            }
+        }
+        return count;
+    }
+};
+```
+**Time Complexity:** O(N²)  
+**Space Complexity:** O(1)  
+
+---
+
+### Optimal Sliding Window Approach
+```cpp
+class Solution {
+public:
+    int numberOfSubstrings(string s) {
+        int count = 0;
+        int lastSeen[3] = {-1, -1, -1}; // Tracks last index of 'a', 'b', and 'c'
+        int n = s.size();
+
+        for(int i = 0; i < n; i++) {
+            lastSeen[s[i] - 'a'] = i;  // Update last seen index
+
+            // If all characters are seen at least once
+            if(lastSeen[0] != -1 && lastSeen[1] != -1 && lastSeen[2] != -1) {
+                count += 1 + min({lastSeen[0], lastSeen[1], lastSeen[2]});
+            }
+        }
+        return count;
+    }
+};
+```
+**Time Complexity:** O(N)  
+**Space Complexity:** O(1)  
+
+---
 
 
 [🔼 Back to Top](#-table-of-contents)
