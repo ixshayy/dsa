@@ -2,6 +2,7 @@
 1. [Top K Frequent Elements](#1-top-k-frequent-elements)
 2. [Find Median from Data Stream](#2-find-median-from-data-stream)
 3. [Kth Largest Element in a Stream](#3-kth-largest-element-in-a-stream)
+4. [Design Twitter](#4-design-twitter)
 
 
 # 1. Top K Frequent Elements
@@ -373,3 +374,116 @@ public:
 
 
 
+[🔼 Back to Top](#-table-of-contents)
+
+
+# 4. Design Twitter
+
+## Problem Statement
+Design a simplified version of Twitter where users can:
+- Post tweets
+- Follow/unfollow other users
+- Retrieve the 10 most recent tweets in the user's news feed
+
+### Implement the `Twitter` class:
+- `Twitter()`: Initializes the Twitter object.
+- `void postTweet(int userId, int tweetId)`: Composes a new tweet with ID `tweetId` by the user `userId`. Each tweet has a unique ID.
+- `vector<int> getNewsFeed(int userId)`: Retrieves the 10 most recent tweet IDs in the user's news feed, sorted from most recent to least recent. This includes tweets from users they follow and their own tweets.
+- `void follow(int followerId, int followeeId)`: The user with ID `followerId` starts following `followeeId`.
+- `void unfollow(int followerId, int followeeId)`: The user with ID `followerId` unfollows `followeeId`.
+
+---
+
+## Example
+### **Input**
+```cpp
+["Twitter", "postTweet", "getNewsFeed", "follow", "postTweet", "getNewsFeed", "unfollow", "getNewsFeed"]
+[[], [1, 5], [1], [1, 2], [2, 6], [1], [1, 2], [1]]
+```
+
+### **Output**
+```cpp
+[null, null, [5], null, null, [6, 5], null, [5]]
+```
+
+### **Explanation**
+```cpp
+Twitter twitter = new Twitter();
+twitter.postTweet(1, 5); // User 1 posts a new tweet (id = 5)
+twitter.getNewsFeed(1);  // User 1's news feed -> [5]
+twitter.follow(1, 2);    // User 1 follows User 2
+twitter.postTweet(2, 6); // User 2 posts a new tweet (id = 6)
+twitter.getNewsFeed(1);  // User 1's news feed -> [6, 5]
+twitter.unfollow(1, 2);  // User 1 unfollows User 2
+twitter.getNewsFeed(1);  // User 1's news feed -> [5]
+```
+
+---
+
+## Constraints
+- `1 <= userId, followerId, followeeId <= 500`
+- `0 <= tweetId <= 10^4`
+- All tweets have unique IDs.
+- At most `3 * 10^4` calls to `postTweet`, `getNewsFeed`, `follow`, and `unfollow`.
+- A user cannot follow themselves.
+
+---
+
+
+## Practice
+[Leetcode](https://leetcode.com/problems/design-twitter/description/)
+
+
+## Solution
+```cpp
+class Twitter {
+public:
+    unordered_map<int, set<int>> followers; // followerId -> set of followees
+    unordered_map<int, vector<pair<int, int>>> tweets; // userId -> list of {time, tweetId}
+    int time;
+    int maxFeed;
+
+    Twitter() {
+        time  = 0;
+        maxFeed = 10;
+    }
+    
+    void postTweet(int userId, int tweetId) {
+        time++;
+        tweets[userId].push_back({time, tweetId});
+    }
+    
+    vector<int> getNewsFeed(int userId) {
+        vector<int> ans;
+        priority_queue<pair<int, int>> feed;
+        
+        // Ensure user follows themselves
+        followers[userId].insert(userId);
+        
+        for(auto followee : followers[userId]) {
+            for(auto &tweet : tweets[followee]) {
+                feed.push(tweet);
+                if(feed.size() > maxFeed) feed.pop(); // Limit to 10 tweets
+            }
+        }
+        
+        while(!feed.empty()) {
+            ans.push_back(feed.top().second);
+            feed.pop();
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+    
+    void follow(int followerId, int followeeId) {
+        if(followerId != followeeId) followers[followerId].insert(followeeId);
+    }
+    
+    void unfollow(int followerId, int followeeId) {
+        followers[followerId].erase(followeeId);
+    }
+};
+```
+
+
+[🔼 Back to Top](#-table-of-contents)
